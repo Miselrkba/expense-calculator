@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import uuid from "react-uuid";
 
 import "./App.css";
@@ -6,11 +6,15 @@ import { Alert } from "./components/Alert";
 import { ExpenseForm } from "./components/ExpenseForm";
 import { ExpenseList } from "./components/ExpenseList";
 
-const initialExpenses = [
-  { id: uuid(), charge: "rent", amount: 1600 },
-  { id: uuid(), charge: "car", amount: 400 },
-  { id: uuid(), charge: "credit card", amount: 1200 },
-];
+// const initialExpenses = [
+//   { id: uuid(), charge: "rent", amount: 1600 },
+//   { id: uuid(), charge: "car", amount: 400 },
+//   { id: uuid(), charge: "credit card", amount: 1200 },
+// ];
+
+const initialExpenses = localStorage.getItem("expenses")
+  ? JSON.parse(localStorage.getItem("expenses"))
+  : [];
 
 function App() {
   // ****** state values ******
@@ -27,6 +31,12 @@ function App() {
 
   // edit item
   const [id, setId] = useState(0);
+
+  // *******useEffect******
+  useEffect(() => {
+    console.log("we called useEffect");
+    localStorage.setItem("expenses", JSON.stringify(expenses));
+  }, [expenses]);
 
   // ****** functionality ******
   const handleCharge = (e) => {
@@ -53,6 +63,7 @@ function App() {
         });
         setExpenses(tempExpenses);
         setEdit(false);
+        handleAlert({ type: "success", text: "item edited" });
       } else {
         const singleExpense = {
           id: uuid(),
